@@ -7,10 +7,10 @@ const JUMP_DURATION = 0.5;
 @ccclass('Player')
 export class Player extends Component {
     private _isJumping = false;
+    private _isRunning = false;
     private _animation: SkeletalAnimation | null;
 
     protected override onLoad(): void {
-        input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
         this._animation = this.getComponent(SkeletalAnimation);
     }
 
@@ -23,8 +23,28 @@ export class Player extends Component {
         this._isJumping = false;
     }
 
+    public run(): void {
+        if (this._isRunning)
+            return;
+
+        this._isRunning = true;
+        this._animation.crossFade("Root|Run");
+        input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
+    }
+
+    public reset(): void {
+        if (!this._isRunning)
+            return;
+
+        this._isRunning = false;
+        this._isJumping = false;
+        this._animation.crossFade("Root|Idle");
+        this.node.setPosition(new Vec3(0, 0, 0));
+        input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
+    }
+
     private jump(): void {
-        if (this._isJumping)
+        if (!this._isRunning || this._isJumping)
             return;
 
         this._isJumping = true;
