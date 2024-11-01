@@ -4,12 +4,12 @@ const { ccclass, property } = _decorator;
 const JUMP_HEIGHT = 3.5;
 const JUMP_DURATION = 0.5;
 
-@ccclass('Body')
-export class Body extends Component {
+@ccclass('Player')
+export class Player extends Component {
     private _isJumping = false;
     private _animation: SkeletalAnimation | null;
 
-    protected onLoad(): void {
+    protected override onLoad(): void {
         input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
         this._animation = this.getComponent(SkeletalAnimation);
     }
