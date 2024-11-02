@@ -1,6 +1,6 @@
 import { _decorator, Component, director, EventTouch, input, Input, Node } from 'cc';
-import { Player } from './Player';
 import { Boxes } from './Boxes';
+import { Player } from './Player';
 const { ccclass, property } = _decorator;
 
 @ccclass('GameManager')
@@ -15,9 +15,8 @@ export class GameManager extends Component {
         input.once(Input.EventType.TOUCH_START, this.onTouchStart, this);
     }
 
-    private onTouchStart(event: EventTouch): void {
-        this.player.run();
-        this.boxes.move();
+    private onTouchStart(_event: EventTouch): void {
+        this.player.move();
     }
 }
 
