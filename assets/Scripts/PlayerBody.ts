@@ -8,19 +8,15 @@ const JUMP_DURATION = 0.5;
 export class PlayerBody extends Component {
     private _isJumping = false;
     private _isRunning = false;
-    private _animation: SkeletalAnimation | null;
-    private _jumpTween: Tween | null;
+    private _animation!: SkeletalAnimation | null;
+    private _jumpTween: Tween | null = null;
 
     protected override onLoad(): void {
         this._animation = this.getComponent(SkeletalAnimation);
     }
 
-    // private onTouchStart(_event: EventTouch): void {
-    //     this.jump();
-    // }
-
     private onJumpComplete(): void {
-        this._animation.crossFade("Root|Run");
+        this._animation?.crossFade("Root|Run");
         this._isJumping = false;
     }
 
@@ -29,41 +25,35 @@ export class PlayerBody extends Component {
             return;
 
         this._isRunning = true;
-        this._animation.crossFade("Root|Run");
-        // input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
+        this._animation?.crossFade("Root|Run");
     }
 
     public reset(): void {
-        if (!this._isRunning)
-            return;
-
         this._isRunning = false;
         this._isJumping = false;
-        this._animation.crossFade("Root|Idle");
+        this._animation?.crossFade("Root|Idle");
         this.node.setPosition(new Vec3(0, 0, 0));
-        // input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
     }
 
     public stop(): void {
-        this._animation.crossFade("Root|Idle");
+        this._animation?.crossFade("Root|Idle");
         this._isRunning = false;
-        if (this._isJumping) {
-            this._isJumping = false;
-            this._jumpTween.stop();
-        }
+        this._isJumping = false;
+        this._jumpTween?.stop();
     }
 
-    public jump(): void {
+    public jump(onComplete: () => void): void {
         if (!this._isRunning || this._isJumping)
             return;
 
         this._isJumping = true;
-        this._animation.crossFade("Root|Jump");
+        this._animation?.crossFade("Root|Jump");
 
         this._jumpTween = tween(this.node)
             .by(JUMP_DURATION, { position: new Vec3(0, JUMP_HEIGHT, 0) }, { easing: 'smooth' })
             .by(JUMP_DURATION, { position: new Vec3(0, -JUMP_HEIGHT, 0) }, { easing: 'smooth' })
             .call(this.onJumpComplete, this)
+            .call(onComplete)
             .start();
     }
 }
