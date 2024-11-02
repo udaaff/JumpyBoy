@@ -5,5 +5,8 @@
       "width": 640,
       "height": 960
     }
+  },
+  "physics": {
+    "allowSleep": true
   }
 }

@@ -1,4 +1,4 @@
-import { _decorator, Component, EventMouse, EventTouch, Input, input, SkeletalAnimation, tween, Vec3 } from 'cc';
+import { _decorator, Component, EventMouse, EventTouch, Input, input, SkeletalAnimation, Tween, tween, Vec3 } from 'cc';
 const { ccclass } = _decorator;
 
 const JUMP_HEIGHT = 3.5;
@@ -9,6 +9,7 @@ export class PlayerBody extends Component {
     private _isJumping = false;
     private _isRunning = false;
     private _animation: SkeletalAnimation | null;
+    private _jumpTween: Tween | null;
 
     protected override onLoad(): void {
         this._animation = this.getComponent(SkeletalAnimation);
@@ -43,6 +44,15 @@ export class PlayerBody extends Component {
         input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
     }
 
+    public stop(): void {
+        this._animation.crossFade("Root|Idle");
+        this._isRunning = false;
+        if (this._isJumping) {
+            this._isJumping = false;
+            this._jumpTween.stop();
+        }
+    }
+
     private jump(): void {
         if (!this._isRunning || this._isJumping)
             return;
@@ -50,7 +60,7 @@ export class PlayerBody extends Component {
         this._isJumping = true;
         this._animation.crossFade("Root|Jump");
 
-        tween(this.node)
+        this._jumpTween = tween(this.node)
             .by(JUMP_DURATION, { position: new Vec3(0, JUMP_HEIGHT, 0) }, { easing: 'smooth' })
             .by(JUMP_DURATION, { position: new Vec3(0, -JUMP_HEIGHT, 0) }, { easing: 'smooth' })
             .call(this.onJumpComplete, this)
