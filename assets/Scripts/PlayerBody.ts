@@ -15,9 +15,9 @@ export class PlayerBody extends Component {
         this._animation = this.getComponent(SkeletalAnimation);
     }
 
-    private onTouchStart(_event: EventTouch): void {
-        this.jump();
-    }
+    // private onTouchStart(_event: EventTouch): void {
+    //     this.jump();
+    // }
 
     private onJumpComplete(): void {
         this._animation.crossFade("Root|Run");
@@ -30,7 +30,7 @@ export class PlayerBody extends Component {
 
         this._isRunning = true;
         this._animation.crossFade("Root|Run");
-        input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
+        // input.on(Input.EventType.TOUCH_START, this.onTouchStart, this);
     }
 
     public reset(): void {
@@ -41,7 +41,7 @@ export class PlayerBody extends Component {
         this._isJumping = false;
         this._animation.crossFade("Root|Idle");
         this.node.setPosition(new Vec3(0, 0, 0));
-        input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
+        // input.off(Input.EventType.TOUCH_START, this.onTouchStart, this);
     }
 
     public stop(): void {
@@ -53,7 +53,7 @@ export class PlayerBody extends Component {
         }
     }
 
-    private jump(): void {
+    public jump(): void {
         if (!this._isRunning || this._isJumping)
             return;
 

@@ -1,6 +1,8 @@
-import { _decorator, CCFloat, Component, Vec3 } from 'cc';
+import { _decorator, CCFloat, Component, tween, Vec3 } from 'cc';
 import { PlayerBody } from './PlayerBody';
 const { ccclass, property } = _decorator;
+
+const FALL_DURATION = 2;
 
 @ccclass('Player')
 export class Player extends Component {
@@ -11,31 +13,31 @@ export class Player extends Component {
     private speed = 2;
 
     private _isRunning = false;
-    private _isFalling = false;
 
     public move(): void {
-        if (this._isRunning)
-            return;
-
         this._isRunning = true;
         this.playerBody.run();
     }
 
-    public fall(): void {
-        if (this._isFalling)
-            return;
-
-        this._isFalling = true;
+    public fall(onComplete?: () => void): void {
         this._isRunning = false;
         this.playerBody.stop();
+
+        tween(this.playerBody.node)
+            .by(FALL_DURATION, {
+                eulerAngles: new Vec3(720, 720, 720),
+                position: new Vec3(0, 20, 0),
+            })
+            .call(onComplete)
+            .start();
+    }
+
+    public jump(): void {
+        this.playerBody.jump();
     }
 
     public reset(): void {
-        if (!this._isRunning)
-            return;
-
         this._isRunning = false;
-        this._isFalling = false;
         this.node.setPosition(new Vec3(0, 0, 0));
         this.playerBody.reset();
     }

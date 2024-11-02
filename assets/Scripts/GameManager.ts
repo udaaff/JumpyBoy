@@ -15,8 +15,10 @@ export class GameManager extends Component {
     @property({ type: Boxes })
     private boxes: Boxes| null;
 
+    private _numFalls = 0;
+
     protected onLoad(): void {
-        input.once(Input.EventType.TOUCH_START, this.onTouchStart, this);
+        input.once(Input.EventType.TOUCH_START, this.onGameStart, this);
     }
 
     protected override start(): void {
@@ -26,12 +28,23 @@ export class GameManager extends Component {
     }
 
     private onCollisionEnter(event: ITriggerEvent): void {
-        console.log("GM")
-        this.player.fall();
+        input.off(Input.EventType.TOUCH_START, this.onPlayerJump, this);
+
+        this.player.fall(() => this.showTryAgain());
     }
 
-    private onTouchStart(_event: EventTouch): void {
+    private showTryAgain(): void {
+
+    }
+
+    private onGameStart(_event: EventTouch): void {
+        input.on(Input.EventType.TOUCH_START, this.onPlayerJump, this);
+
         this.player.move();
+    }
+
+    private onPlayerJump(_event: EventTouch): void {
+        this.player.jump();
     }
 }
 
