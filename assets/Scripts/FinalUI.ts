@@ -15,6 +15,10 @@ export class FinalUI extends Component {
             window.open(this.url, '_blank');
         }
     }
+
+    protected override onDisable(): void {
+        input.off(Input.EventType.TOUCH_START, this.openUrl, this);
+    }
 }
 
 
